@@ -18,7 +18,7 @@ A production-ready Telegram Bot template built with **Node.js (ES Modules)** and
 - **Extensibility**:
   - Handlers are modularized using `Composer` and unified in a central registry.
   - Context Extender attaches helpful shortcuts (`ctx.userId`, `ctx.t()` for localization) directly to the grammY context.
-- **Localization (i18n)**: Out-of-the-box support for English (`en`) and Indonesian (`id`).
+- **Localization (i18n)**: Out-of-the-box support for English (`en`) and Indonesian (`id`) using the official `@grammyjs/i18n` plugin and Mozilla's Fluent syntax (`.ftl`).
 - **Structured Logging**: Pino-style JSON logger that outputs readable text in development and structured JSON in production.
 
 ---
@@ -40,16 +40,17 @@ telegram-apps-bot-js/
 │   │   ├── start.js          # /start command & initial keyboard
 │   │   ├── help.js           # /help command
 │   │   └── settings.js       # /settings menu
-│   ├── locales/              # i18n Translation files
-│   │   ├── en.js             # English
-│   │   └── id.js             # Indonesian
+│   ├── locales/              # Fluent i18n Translation files
+│   │   ├── en.ftl            # English translations
+│   │   └── id.ftl            # Indonesian translations
 │   ├── middlewares/          # Custom processing layers
 │   │   ├── idempotency.js    # Deduplicates updates
 │   │   ├── sessionLock.js    # Per-user mutex lock
 │   │   ├── rateLimiter.js    # Sliding window rate limiter
 │   │   ├── session.js        # Session storage configuration
+│   │   ├── i18n.js           # @grammyjs/i18n instance & configuration
 │   │   ├── logger.js         # Request tracing
-│   │   └── contextExtender.js# Context shortcuts & i18n helpers
+│   │   └── contextExtender.js# Context shortcuts
 │   ├── services/             # Business Logic & External APIs
 │   │   ├── userService.js    # User data management
 │   │   └── apiService.js     # External HTTP client with retries
@@ -117,9 +118,10 @@ The bot processes every incoming update through a strict middleware chain in `sr
 2. **Idempotency**: Drops updates with an already processed `update_id`.
 3. **Rate Limiter**: Rejects requests if a user exceeds the allowed limit.
 4. **Session**: Initializes or loads the user's session data.
-5. **Context Extender**: Injects custom helpers (e.g., `ctx.t()` for translations).
-6. **Session Lock**: Ensures updates from the same user are processed sequentially.
-7. **Handlers**: Executes your business logic (`/start`, `/settings`, etc).
+5. **I18n**: Official `@grammyjs/i18n` integration. Detects language and injects `ctx.t()`.
+6. **Context Extender**: Injects custom helpers (e.g., `ctx.userId`).
+7. **Session Lock**: Ensures updates from the same user are processed sequentially.
+8. **Handlers**: Executes your business logic (`/start`, `/settings`, etc).
 
 ---
 

@@ -15,7 +15,7 @@ const helpComposer = new Composer();
 
 /**
  * /help command — displays a formatted list of all available commands.
- * Uses localized strings via ctx.t().
+ * Uses localized strings via ctx.t() provided by @grammyjs/i18n.
  */
 helpComposer.command('help', async (ctx) => {
   log.info('Help command invoked', { userId: ctx.userId });
@@ -28,7 +28,7 @@ helpComposer.command('help', async (ctx) => {
       userId: ctx.userId,
       error: error.message,
     });
-    await ctx.reply(ctx.t('errorGeneral'));
+    await ctx.reply(ctx.t('error-general'));
   }
 });
 

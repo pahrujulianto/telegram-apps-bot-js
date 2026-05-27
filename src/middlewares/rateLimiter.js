@@ -71,7 +71,9 @@ export function rateLimiter(options = {}) {
       // Default: silently drop the update (don't call next())
       // The contextExtender middleware will provide ctx.t() for localized messages
       try {
-        await ctx.reply('⏳ Too many requests. Please slow down.');
+        // Use i18n if available, fallback to english text if not
+        const msg = ctx.t ? ctx.t('rate-limited') : '⏳ Too many requests. Please slow down.';
+        await ctx.reply(msg);
       } catch {
         // Ignore reply errors (e.g., if the user blocked the bot)
       }

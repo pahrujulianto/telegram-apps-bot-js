@@ -2,7 +2,7 @@
  * @module handlers/start
  * @description Handler for the /start command.
  * Demonstrates the Composer pattern, session usage, inline keyboard,
- * and context helper methods (ctx.t, ctx.displayName).
+ * and context helper methods (ctx.t via @grammyjs/i18n, ctx.displayName).
  */
 
 import { Composer, InlineKeyboard } from 'grammy';
@@ -42,7 +42,7 @@ startComposer.command('start', async (ctx) => {
       .row()
       .text('📊 Status', 'action:status');
 
-    // Send localized welcome message
+    // Send localized welcome message (Fluent variable: $name)
     const welcomeText = ctx.t('welcome', { name: ctx.displayName });
 
     await ctx.reply(welcomeText, {
@@ -53,7 +53,7 @@ startComposer.command('start', async (ctx) => {
       userId: ctx.userId,
       error: error.message,
     });
-    await ctx.reply(ctx.t('errorGeneral'));
+    await ctx.reply(ctx.t('error-general'));
   }
 });
 
@@ -75,11 +75,14 @@ startComposer.callbackQuery('action:help', async (ctx) => {
 startComposer.callbackQuery('action:status', async (ctx) => {
   await ctx.answerCallbackQuery();
 
+  // Get current locale from i18n
+  const currentLocale = await ctx.i18n.getLocale();
+
   const statusText =
     `📊 *Your Status*\n\n` +
     `👤 User ID: \`${ctx.userId}\`\n` +
     `💬 Messages: ${ctx.session.messageCount}\n` +
-    `🌐 Locale: ${ctx.session.locale}\n` +
+    `🌐 Locale: ${currentLocale}\n` +
     `📅 Session since: ${ctx.session.createdAt || 'N/A'}`;
 
   await ctx.reply(statusText, { parse_mode: 'Markdown' });

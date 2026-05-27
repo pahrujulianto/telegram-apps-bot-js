@@ -9,9 +9,10 @@
  * 2. Idempotency        — deduplicates by update_id
  * 3. Rate Limiter       — throttles excessive requests
  * 4. Session            — loads/saves session state
- * 5. Context Extender   — attaches helpers (ctx.t, ctx.userId, etc.)
- * 6. Session Lock       — serializes per-user processing
- * 7. Handlers           — command/callback/message handlers
+ * 5. I18n               — internationalization (ctx.t)
+ * 6. Context Extender   — attaches helpers (ctx.userId, etc.)
+ * 7. Session Lock       — serializes per-user processing
+ * 8. Handlers           — command/callback/message handlers
  */
 
 import { Bot, GrammyError, HttpError } from 'grammy';
@@ -23,6 +24,7 @@ import { requestLogger } from './middlewares/logger.js';
 import { idempotency } from './middlewares/idempotency.js';
 import { rateLimiter } from './middlewares/rateLimiter.js';
 import { createSessionMiddleware } from './middlewares/session.js';
+import { createI18n } from './middlewares/i18n.js';
 import { contextExtender } from './middlewares/contextExtender.js';
 import { sessionLock } from './middlewares/sessionLock.js';
 
@@ -35,6 +37,9 @@ const log = createLogger('bot');
 log.info('Initializing bot...');
 
 export const bot = new Bot(config.botToken);
+
+// ── Create I18n instance (needed by handlers for locale list) ──
+export const i18n = createI18n();
 
 // ── Register Middleware (ORDER MATTERS!) ──────────────────────
 
@@ -55,15 +60,18 @@ bot.use(rateLimiter({
 // 4. Session — load/save user session state
 bot.use(createSessionMiddleware());
 
-// 5. Context Extender — attach helpers AFTER session (needs ctx.session)
+// 5. I18n — internationalization (AFTER session, needs ctx.session)
+bot.use(i18n);
+
+// 6. Context Extender — attach helpers AFTER session & i18n
 bot.use(contextExtender());
 
-// 6. Session Lock — serialize per-user AFTER context is ready
+// 7. Session Lock — serialize per-user AFTER context is ready
 bot.use(sessionLock());
 
 // ── Register Handlers ─────────────────────────────────────────
 
-// 7. All command/callback/message handlers
+// 8. All command/callback/message handlers
 bot.use(handlers);
 
 // ── Global Error Boundary ─────────────────────────────────────

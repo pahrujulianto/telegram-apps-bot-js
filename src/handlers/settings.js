@@ -3,6 +3,7 @@
  * @description Handler for the /settings command.
  * Demonstrates inline keyboard with callback queries,
  * session read/write patterns, and multi-step interaction.
+ * Uses @grammyjs/i18n for locale switching via ctx.i18n.setLocale().
  */
 
 import { Composer, InlineKeyboard } from 'grammy';
@@ -36,16 +37,17 @@ settingsComposer.callbackQuery('action:settings', async (ctx) => {
 settingsComposer.callbackQuery('settings:language', async (ctx) => {
   await ctx.answerCallbackQuery();
 
+  const currentLocale = await ctx.i18n.getLocale();
   const keyboard = new InlineKeyboard();
 
   // Add a button for each supported locale
   for (const locale of SUPPORTED_LOCALES) {
     const label = locale === 'en' ? '🇺🇸 English' : '🇮🇩 Bahasa Indonesia';
-    const currentMarker = ctx.session.locale === locale ? ' ✅' : '';
+    const currentMarker = currentLocale === locale ? ' ✅' : '';
     keyboard.text(`${label}${currentMarker}`, `settings:lang:${locale}`).row();
   }
 
-  keyboard.text(ctx.t('settingsBack'), 'settings:back');
+  keyboard.text(ctx.t('settings-back'), 'settings:back');
 
   await ctx.editMessageText('🌐 *Select your language:*', {
     parse_mode: 'Markdown',
@@ -56,6 +58,7 @@ settingsComposer.callbackQuery('settings:language', async (ctx) => {
 /**
  * Callback: Language change action.
  * Matches patterns like "settings:lang:en", "settings:lang:id".
+ * Uses ctx.i18n.setLocale() from @grammyjs/i18n to persist the choice.
  */
 settingsComposer.callbackQuery(/^settings:lang:(.+)$/, async (ctx) => {
   const locale = ctx.match[1];
@@ -65,8 +68,8 @@ settingsComposer.callbackQuery(/^settings:lang:(.+)$/, async (ctx) => {
     return;
   }
 
-  // Update session locale
-  ctx.session.locale = locale;
+  // Use official i18n plugin to set and persist locale in session
+  await ctx.i18n.setLocale(locale);
 
   log.info('User changed language', {
     userId: ctx.userId,
@@ -74,7 +77,7 @@ settingsComposer.callbackQuery(/^settings:lang:(.+)$/, async (ctx) => {
   });
 
   await ctx.answerCallbackQuery({
-    text: ctx.t('languageChanged'),
+    text: ctx.t('language-changed'),
   });
 
   // Refresh the settings menu in the new locale
@@ -120,17 +123,19 @@ settingsComposer.callbackQuery('settings:back', async (ctx) => {
 async function showSettingsMenu(ctx, edit = false) {
   const notifStatus =
     ctx.session.preferences.notifications !== false ? '🔔 ON' : '🔕 OFF';
-  const currentLang = ctx.session.locale === 'en' ? '🇺🇸 EN' : '🇮🇩 ID';
+
+  const currentLocale = await ctx.i18n.getLocale();
+  const currentLang = currentLocale === 'en' ? '🇺🇸 EN' : '🇮🇩 ID';
 
   const keyboard = new InlineKeyboard()
-    .text(`${ctx.t('settingsLanguage')} [${currentLang}]`, 'settings:language')
+    .text(`${ctx.t('settings-language')} [${currentLang}]`, 'settings:language')
     .row()
     .text(
-      `${ctx.t('settingsNotifications')} [${notifStatus}]`,
+      `${ctx.t('settings-notifications')} [${notifStatus}]`,
       'settings:notifications'
     );
 
-  const text = ctx.t('settingsTitle');
+  const text = ctx.t('settings-title');
 
   try {
     if (edit) {

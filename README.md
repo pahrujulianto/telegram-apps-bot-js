@@ -27,36 +27,40 @@ A production-ready Telegram Bot template built with **Node.js (ES Modules)** and
 
 ```
 telegram-apps-bot-js/
-├── .env.example              # Environment configuration template
-├── package.json              # Project dependencies & scripts
-├── src/
-│   ├── app.js                # Application entry point (Polling/Webhook switcher)
-│   ├── bot.js                # Bot orchestrator (middleware & handler setup)
-│   ├── config/
-│   │   ├── env.js            # Environment validation (fail-fast)
-│   │   └── constants.js      # Global constants & default values
-│   ├── handlers/             # Modular bot features (Composers)
-│   │   ├── index.js          # Central registry
-│   │   ├── start.js          # /start command & initial keyboard
-│   │   ├── help.js           # /help command
-│   │   └── settings.js       # /settings menu
-│   ├── locales/              # Fluent i18n Translation files
-│   │   ├── en.ftl            # English translations
-│   │   └── id.ftl            # Indonesian translations
-│   ├── middlewares/          # Custom processing layers
-│   │   ├── idempotency.js    # Deduplicates updates
-│   │   ├── sessionLock.js    # Per-user mutex lock
-│   │   ├── rateLimiter.js    # Sliding window rate limiter
-│   │   ├── session.js        # Session storage configuration
-│   │   ├── i18n.js           # @grammyjs/i18n instance & configuration
-│   │   ├── logger.js         # Request tracing
-│   │   └── contextExtender.js# Context shortcuts
-│   ├── services/             # Business Logic & External APIs
-│   │   ├── userService.js    # User data management
-│   │   └── apiService.js     # External HTTP client with retries
-│   └── utils/
-│       ├── logger.js         # Structured JSON logging
-│       └── helpers.js        # Shared utility functions
+├── 📁 src
+│   ├── 📁 config
+│   │   ├── 📄 constants.js
+│   │   └── 📄 env.js
+│   ├── 📁 handlers
+│   │   ├── 📄 help.js
+│   │   ├── 📄 index.js
+│   │   ├── 📄 settings.js
+│   │   └── 📄 start.js
+│   ├── 📁 locales
+│   │   ├── 📄 en.ftl
+│   │   └── 📄 id.ftl
+│   ├── 📁 middlewares
+│   │   ├── 📄 contextExtender.js
+│   │   ├── 📄 i18n.js
+│   │   ├── 📄 idempotency.js
+│   │   ├── 📄 logger.js
+│   │   ├── 📄 rateLimiter.js
+│   │   ├── 📄 session.js
+│   │   └── 📄 sessionLock.js
+│   ├── 📁 services
+│   │   ├── 📄 apiService.js
+│   │   └── 📄 userService.js
+│   ├── 📁 utils
+│   │   ├── 📄 helpers.js
+│   │   └── 📄 logger.js
+│   ├── 📄 app.js
+│   └── 📄 bot.js
+├── ⚙️ .env.example
+├── ⚙️ .gitignore
+├── 📄 LICENSE
+├── 📝 README.md
+├── ⚙️ package-lock.json
+└── ⚙️ package.json
 ```
 
 ---

@@ -37,10 +37,10 @@ startComposer.command('start', async (ctx) => {
 
     // Build inline keyboard with quick actions
     const keyboard = new InlineKeyboard()
-      .text('📚 Help', 'action:help')
-      .text('⚙️ Settings', 'action:settings')
+      .text('📚 Help', 'action:help').danger()
+      .text('⚙️ Settings', 'action:settings').primary()
       .row()
-      .text('📊 Status', 'action:status');
+      .text('📊 Status', 'action:status').success()
 
     // Send localized welcome message (Fluent variable: $name)
     const welcomeText = ctx.t('welcome', { name: ctx.displayName });

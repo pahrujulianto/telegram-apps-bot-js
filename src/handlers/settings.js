@@ -128,12 +128,12 @@ async function showSettingsMenu(ctx, edit = false) {
   const currentLang = currentLocale === 'en' ? '🇺🇸 EN' : '🇮🇩 ID';
 
   const keyboard = new InlineKeyboard()
-    .text(`${ctx.t('settings-language')} [${currentLang}]`, 'settings:language')
+    .text(`${ctx.t('settings-language')} [${currentLang}]`, 'settings:language').primary()
     .row()
     .text(
       `${ctx.t('settings-notifications')} [${notifStatus}]`,
       'settings:notifications'
-    );
+    ).primary();
 
   const text = ctx.t('settings-title');
 
